@@ -13,6 +13,8 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        if username=="admin" and password=="admin":
+            return render_template("admin_page.html")
         conn = sqlite3.connect("data.db")
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
@@ -29,6 +31,35 @@ def login():
 @app.route('/redirect')
 def redir():
     return render_template('register.html')
+
+@app.route('/redirect2')
+def redir2():
+    return render_template('changepass.html')
+
+@app.route('/change', methods=['POST'])
+def change():
+    if request.method == 'POST':
+        username = request.form['username']
+        old_password = request.form['old_password']
+        new_password = request.form['new_password']
+        conn = sqlite3.connect("data.db")
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET password=? WHERE username=? AND password=?", (new_password,username,old_password,))
+        conn.commit()
+        conn.close()
+        return render_template("login.html")
+    
+@app.route('/remove', methods=['POST'])
+def remove():
+    if request.method == 'POST':
+        username = request.form['username']
+        name = request.form['name']
+        conn = sqlite3.connect("data.db")
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM users WHERE username = ? AND name = ?", (username,name,))
+        conn.commit()
+        conn.close()
+        return render_template("login.html")
 
 @app.route('/register', methods=["POST"])
 def register():
