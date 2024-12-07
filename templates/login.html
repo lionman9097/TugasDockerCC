@@ -4,35 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center min-h-screen">
+
     <div class="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full">
         <h2 class="text-3xl font-semibold text-center text-gray-800 mb-8">Login</h2>
-        
+
         <!-- Login Form -->
-        <form action="/login" method="post" enctype="multipart/form-data">
-            <input type="text" placeholder="Username" name="username" required
-                   class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
-            <input type="password" placeholder="Password" name="password" required
-                   class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
+        <form action="/login" method="post" id="login-form">
             
-            <button type="submit" 
-                    class="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <!-- Username Input -->
+            <div class="mb-6 relative">
+                <label for="username" class="block text-gray-700 font-medium mb-2">Username</label>
+                <div class="relative">
+                    <input type="text" id="username" name="username" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent pl-10"
+                        placeholder="Enter your username">
+                    <i class="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+            </div>
+
+            <!-- Password Input -->
+            <div class="mb-6 relative">
+                <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
+                <div class="relative">
+                    <input type="password" id="password" name="password" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent pl-10"
+                        placeholder="Enter your password">
+                    <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <!-- Show/Hide Password Icon -->
+                    <i id="toggle-password" class="fas fa-eye absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer"></i>
+                </div>
+            </div>
+
+            <!-- Login Button -->
+            <button type="submit" class="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 Login
             </button>
         </form>
-        
+
         <!-- Forgot Password Link -->
-        <a href="/redirect2" class="block text-center text-indigo-600 hover:text-indigo-800 mt-4">Change password</a>
+        <a href="/redirect2" class="block text-center text-indigo-600 hover:text-indigo-800 mt-4">
+            <i class="fas fa-key"></i> Change password
+        </a>
 
         <!-- Register Button -->
         <form action="/redirect" method="get" class="mt-4">
-            <button type="submit"
-                    class="w-full py-3 bg-transparent border-2 border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                Register
+            <button type="submit" class="w-full py-3 bg-transparent border-2 border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <i class="fas fa-user-plus"></i> Register
             </button>
         </form>
     </div>
+
+    <script>
+        // Show/Hide password functionality
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordField = document.getElementById('password');
+        
+        togglePassword.addEventListener('click', function() {
+            const type = passwordField.type === 'password' ? 'text' : 'password';
+            passwordField.type = type;
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
 </body>
 </html>

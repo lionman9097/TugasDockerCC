@@ -5,23 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Page</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full">
-        <h2 class="text-3xl font-semibold text-center text-gray-800 mb-8">Admin Page</h2>
-            <h3 class="text-3xl font-semibold text-center text-gray-800 mb-8">Remove User</h2>
-        
-        <!-- Login Form -->
-        <form action="/remove" method="post" enctype="multipart/form-data">
-            <input type="text" placeholder="Username" name="username" required
-                   class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
-            <input type="text" placeholder="Nama Lengkap" name="name" required
-                   class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
-            <button type="submit" 
-                    class="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                Remove
-            </button>
-        </form>
-        </div>
+<body class="bg-gray-100 text-gray-800 font-sans">
+
+    <div class="min-h-screen flex flex-col justify-between">
+        <!-- Header Section -->
+        <header class="bg-white text-gray-800 shadow-md p-4 md:p-6">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <h1 class="text-3xl font-semibold text-indigo-600">Admin Dashboard</h1>
+                <button class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Section -->
+        <main class="flex-grow p-6 md:p-8 bg-white rounded-t-lg shadow-lg">
+            <div class="max-w-7xl mx-auto">
+                
+                <!-- Registered Users Section -->
+                <section class="mb-10">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Registered Users</h2>
+                    <div class="overflow-x-auto bg-gray-50 rounded-lg shadow-md">
+                        <table class="min-w-full table-auto border-collapse border border-gray-300">
+                            <thead>
+                                <tr class="bg-indigo-100">
+                                    <th class="py-3 px-6 text-left border border-gray-300">ID</th>
+                                    <th class="py-3 px-6 text-left border border-gray-300">Name</th>
+                                    <th class="py-3 px-6 text-left border border-gray-300">Username</th>
+                                    <th class="py-3 px-6 text-center border border-gray-300">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="py-3 px-6 border border-gray-300">{{ user[0] }}</td>
+                                    <td class="py-3 px-6 border border-gray-300">{{ user[1] }}</td>
+                                    <td class="py-3 px-6 border border-gray-300">{{ user[2] }}</td>
+                                    <td class="py-3 px-6 border border-gray-300 text-center">
+                                        <form action="/remove" method="post" class="inline-block">
+                                            <input type="hidden" name="username" value="{{ user[2] }}">
+                                            <input type="hidden" name="name" value="{{ user[1] }}">
+                                            <button type="submit" 
+                                                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center justify-center">
+                                                <i class="fas fa-trash-alt mr-2"></i> Remove
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Add New User Section -->
+                <section>
+                    <h2 class="text-3xl font-semibold text-gray-800 mb-6">Add New User</h2>
+                    <form action="/register" method="post" enctype="multipart/form-data" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <input type="text" placeholder="Username" name="username" required
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
+                            <input type="text" placeholder="Full Name" name="name" required
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
+                        </div>
+                        <input type="password" placeholder="Password" name="password" required
+                               class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
+                        <button type="submit" 
+                                class="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 flex items-center justify-center">
+                            <i class="fas fa-user-plus mr-2"></i> Add User
+                        </button>
+                    </form>
+                </section>
+
+            </div>
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="py-4 mt-6">
+            <div class="max-w-7xl mx-auto text-center text-gray-500">
+                &copy; 2024 Admin Dashboard | All Rights Reserved
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById("logoutBtn").addEventListener("click", function() {
+            window.location.href = "/login";  // Ganti '/login' dengan path yang sesuai untuk halaman login
+        });
+    </script>
+
 </body>
 </html>
