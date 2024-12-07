@@ -3,71 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            color: #fff;
-        }
-        .login-container {
-            background: #fff;
-            color: #333;
-            padding: 20px 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 300px;
-            text-align: center;
-        }
-        .login-container h2 {
-            margin-bottom: 20px;
-        }
-        .login-container input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        .login-container button {
-            width: 100%;
-            padding: 10px;
-            background: #6a11cb;
-            border: none;
-            border-radius: 5px;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .login-container button:hover {
-            background: #2575fc;
-        }
-        .login-container a {
-            display: block;
-            margin-top: 10px;
-            color: #6a11cb;
-            text-decoration: none;
-        }
-        .login-container a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <title>Register Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="login-container">
-        <h2>Register</h2>
+<body class="bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full">
+        <h2 class="text-3xl font-semibold text-center text-gray-800 mb-8">Register</h2>
+
+        <!-- Register Form -->
         <form action="/register" method="post" enctype="multipart/form-data">
-            <input type="text" placeholder="Nama lengkap" name="name" required>
-            <input type="text" placeholder="Username" name="username" required>
-            <input type="password" placeholder="Password" name="password" required>
-            <button type="submit">Register</button>
+            <input type="text" placeholder="Nama lengkap" name="name" required
+                   class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
+            <input type="text" placeholder="Username" name="username" required
+                   class="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
+            <input type="password" placeholder="Password" name="password" required
+                   class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
+            
+            <button type="submit"
+                    class="w-full py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                Register
+            </button>
         </form>
+
+        <p class="text-center text-gray-600 mt-4">
+            Already have an account? 
+            <a href="/login" class="text-indigo-600 hover:text-indigo-800">Login</a>
+        </p>
     </div>
+
 </body>
 </html>

@@ -1,55 +1,47 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session
 import sqlite3
-import pandas as pd
 
 app = Flask(__name__)
 app.secret_key = 'secrethehe'
 
-# Halaman utama (Login)
 @app.route('/')
 def home():
     return render_template('login.html')
 
-# Login route
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    username = request.form['username']
-    password = request.form['password']
-    conn = sqlite3.connect("data.db")
-    cursor = conn.cursor()
-    
-    # Menggunakan query parameter untuk menghindari SQL injection
-    users = pd.read_sql_query("SELECT * FROM users WHERE username=? AND password=?", conn, params=(username, password))
-    
-    if not users.empty:
-        nama = users['name'].iloc[0]
-        session['username'] = username
-        return f"Login successful, Selamat datang {nama}"
-    else:
-        return "Invalid username or password"
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        conn = sqlite3.connect("data.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
+        user = cursor.fetchone()
+        conn.close()
+        if user:
+            nama = user[1]
+            session['username'] = username
+            return f"Login successful, Selamat datang {nama}"
+        else:
+            return "Invalid username or password"
+    return render_template('login.html')
 
-# Redirect ke halaman registrasi
 @app.route('/redirect')
 def redir():
     return render_template('register.html')
 
-# Register route
 @app.route('/register', methods=["POST"])
 def register():
     username = request.form['username']
     password = request.form['password']
     name = request.form['name']
-    
-    # Cek apakah username sudah ada
     conn = sqlite3.connect("data.db")
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users WHERE username=?", (username,))
     existing_user = cursor.fetchone()
-    
     if existing_user:
-        return "Username already exists. Please choose a different one."
-    
-    # Membuat tabel jika belum ada
+        conn.close()
+        return "Username already taken."
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,15 +50,12 @@ def register():
         password TEXT NOT NULL
     )
     ''')
-    
-    # Menambahkan data user baru
     cursor.execute('''
-    INSERT INTO users (name, username, password) VALUES(?, ?, ?)
+    INSERT INTO users (name, username, password) VALUES (?, ?, ?)
     ''', (name, username, password))
     conn.commit()
     conn.close()
-    
-    return redirect(url_for('home'))  # Redirect ke halaman login setelah berhasil registrasi
+    return render_template("login.html")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
