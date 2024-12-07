@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000" # Map port 5000 of the container to port 5000 on the host
+    volumes:
+      - .:/app # Bind mount the current directory to /app in the container
+      - ./data.db:/app/data.db # Persist the SQLite database file
+    environment:
+      FLASK_ENV: development
+    container_name: flask_app
+
+volumes:
+  db_data:
