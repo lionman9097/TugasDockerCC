@@ -1,6 +1,11 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import sqlite3
+from google.cloud import storage
+import pandas as pd
+import os
 
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "skey.json"
 app = Flask(__name__)
 app.secret_key = 'secrethehe'
 
@@ -16,11 +21,10 @@ def login():
         username = request.form['username']
         password = request.form['password']
         if username == "admin" and password == "admin":
-            # Fetch all users from the database and pass it to the admin page
             conn = sqlite3.connect("data.db")
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM users")
-            users = cursor.fetchall()  # Get all users
+            users = cursor.fetchall()  
             conn.close()
             return render_template("admin_page.html", users=users)
         
@@ -68,8 +72,30 @@ def remove():
         cursor.execute("DELETE FROM users WHERE username = ? AND name = ?", (username, name))
         conn.commit()
         conn.close()
-        
-        # After removing a user, fetch the updated user list and display it again
+        conn = sqlite3.connect("data.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users")
+        users = cursor.fetchall()
+        conn.close()
+        return render_template("admin_page.html", users=users)
+@app.route('/backup', methods=['POST'])
+def backup():
+    output_csv_path = "data_export.csv"
+    if request.method == 'POST':
+        conn = sqlite3.connect("data.db")
+        cursor = conn.cursor()
+        try:
+            # Read data from the database
+            df = pd.read_sql_query("SELECT * FROM users", conn)
+            # Export to CSV
+            df.to_csv(output_csv_path, index=False)
+            print(f"Data exported to {output_csv_path}")
+        finally:
+            conn.close()
+        client = storage.Client()
+        bucket = client.bucket("bucketcc1rafi")
+        blob = bucket.blob("data/data_export.csv")
+        blob.upload_from_filename("data_export.csv")
         conn = sqlite3.connect("data.db")
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users")
@@ -84,19 +110,18 @@ def register():
     name = request.form['name']
     conn = sqlite3.connect("data.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE username=?", (username,))
-    existing_user = cursor.fetchone()
-    
-    if existing_user:
-        conn.close()
-        return "Username already taken."
-    
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         username TEXT NOT NULL,
         password TEXT NOT NULL
     )''')
+    cursor.execute("SELECT * FROM users WHERE username=?", (username,))
+    existing_user = cursor.fetchone()
+    
+    if existing_user:
+        conn.close()
+        return "Username already taken."
     
     cursor.execute('''INSERT INTO users (name, username, password) VALUES (?, ?, ?)''', (name, username, password))
     conn.commit()
